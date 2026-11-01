@@ -1,5 +1,5 @@
 export const colors = {
-  background: '#EDEDED', // page
+  background: '#FFFFFF', // page
   card: '#FFFFFF',       // cards, list rows, sheets, navbar
   elevated: '#F0F0F2',   // inputs, toggles, icon circles
   border: '#E5E5EA',
