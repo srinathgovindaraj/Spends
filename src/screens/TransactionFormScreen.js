@@ -3,10 +3,11 @@ import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform, BackHandler,
 } from 'react-native';
-import { ChevronLeft, ChevronDown, Trash2 } from 'lucide-react-native';
+import { ChevronLeft, ChevronDown, ChevronRight, Trash2, Tag, FileText } from 'lucide-react-native';
 import { useTransactions } from '../context/TransactionsContext';
 import { useAccounts } from '../context/AccountsContext';
 import { useCategories } from '../context/CategoriesContext';
+import { useSettings } from '../context/SettingsContext';
 import { colors, cardShadow, shadow } from '../constants/theme';
 import { getAccountType, txnAccountId } from '../constants/accounts';
 import { getCurrencySymbol } from '../utils/format';
@@ -30,6 +31,7 @@ export default function TransactionFormScreen({ editing, initialType = 'expense'
   const { addTransaction, updateTransaction, deleteTransaction } = useTransactions();
   const { accounts } = useAccounts();
   const { byType, getCategory, getSubcategory } = useCategories();
+  const { t } = useSettings();
 
   const [type, setType] = useState(editing ? editing.type : initialType);
   const [amount, setAmount] = useState(editing ? String(editing.amount) : '');
@@ -141,48 +143,65 @@ export default function TransactionFormScreen({ editing, initialType = 'expense'
         </View>
 
         {/* Account */}
-        <Text style={styles.sectionLabel}>ACCOUNT</Text>
-        <View style={styles.accountCard}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-            {accounts.map((a) => {
-              const t = getAccountType(a.type);
-              const selected = account === a.id;
-              return (
-                <TouchableOpacity
-                  key={a.id}
-                  style={[styles.chip, selected && styles.chipActive]}
-                  onPress={() => setAccount(a.id)}
-                >
-                  <t.Icon size={16} color={selected ? colors.onPrimary : colors.text} strokeWidth={1.75} />
-                  <Text style={[styles.chipText, selected && styles.chipTextActive]}>{a.name}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+        <Text style={styles.sectionLabel}>{t ? t('account') : 'Account'}</Text>
+        <View style={styles.accountTrack}>
+          {accounts.map((a) => {
+            const accType = getAccountType(a.type);
+            const selected = account === a.id;
+            return (
+              <TouchableOpacity
+                key={a.id}
+                style={[styles.accountTab, selected && styles.accountTabActive]}
+                onPress={() => setAccount(a.id)}
+                activeOpacity={0.75}
+              >
+                <accType.Icon size={15} color={selected ? colors.text : colors.muted} strokeWidth={selected ? 2.2 : 1.75} />
+                <Text style={[styles.accountTabText, selected && styles.accountTabTextActive]} numberOfLines={1}>
+                  {a.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Category + note */}
         <View style={styles.detailsCard}>
-          <View style={styles.fieldRow}>
-            <Text style={styles.fieldLabel}>CATEGORY</Text>
-            <TouchableOpacity style={styles.field} onPress={() => setCatOpen(true)}>
+          <TouchableOpacity style={styles.fieldRow} onPress={() => setCatOpen(true)} activeOpacity={0.7}>
+            <View style={styles.fieldLeft}>
+              <View style={styles.iconCircle}>
+                <Tag size={16} color={colors.primary} />
+              </View>
+              <Text style={styles.fieldLabel}>{t ? t('category') : 'Category'}</Text>
+            </View>
+            <View style={styles.fieldRight}>
               {cat ? (
-                <View style={styles.catValue}>
-                  <cat.Icon size={14} color={colors.text} strokeWidth={1.75} />
-                  <Text style={styles.fieldText}>{sub ? `${cat.label} › ${sub.label}` : cat.label}</Text>
+                <View style={styles.catSelectedBadge}>
+                  <cat.Icon size={14} color={colors.text} strokeWidth={2} />
+                  <Text style={styles.catSelectedText} numberOfLines={1}>
+                    {sub ? `${cat.label} › ${sub.label}` : cat.label}
+                  </Text>
                 </View>
               ) : (
                 <Text style={styles.fieldPlaceholder}>Select category</Text>
               )}
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.fieldRow, { marginTop: 14 }]}>
-            <Text style={styles.fieldLabel}>NOTE</Text>
+              <ChevronRight size={18} color={colors.muted} />
+            </View>
+          </TouchableOpacity>
+
+          <View style={styles.fieldDivider} />
+
+          <View style={styles.fieldRow}>
+            <View style={styles.fieldLeft}>
+              <View style={styles.iconCircle}>
+                <FileText size={16} color={colors.primary} />
+              </View>
+              <Text style={styles.fieldLabel}>{t ? t('note') : 'Note'}</Text>
+            </View>
             <TextInput
-              style={[styles.field, styles.fieldInput]}
+              style={styles.fieldInput}
               value={note}
               onChangeText={setNote}
-              placeholder="Add a note"
+              placeholder="Add a note..."
               placeholderTextColor={colors.muted}
               keyboardAppearance="light"
             />
@@ -262,31 +281,130 @@ const styles = StyleSheet.create({
     outlineStyle: 'none', // web: hide the browser focus box
   },
 
-  sectionLabel: { fontSize: 12, fontWeight: '700', color: colors.muted, letterSpacing: 0.5, marginTop: 30, marginBottom: 8, marginLeft: 2 },
-  accountCard: { backgroundColor: colors.card, borderRadius: 10, padding: 10, ...cardShadow },
-  chip: {
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 20,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  accountTrack: {
+    flexDirection: 'row',
+    backgroundColor: colors.elevated,
+    borderRadius: 12,
+    padding: 3,
+  },
+  accountTab: {
+    flex: 1,
+    height: 42,
+    borderRadius: 9,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 38,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    backgroundColor: colors.elevated,
-    marginRight: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    backgroundColor: 'transparent',
   },
-  chipActive: { backgroundColor: colors.primary },
-  chipText: { fontSize: 14, color: colors.text, marginLeft: 8 },
-  chipTextActive: { color: colors.onPrimary, fontWeight: '600' },
+  accountTabActive: {
+    backgroundColor: colors.card,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+  },
+  accountTabText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.muted,
+    marginLeft: 6,
+  },
+  accountTabTextActive: {
+    color: colors.text,
+    fontWeight: '600',
+  },
 
-  detailsCard: { backgroundColor: colors.card, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 16, marginTop: 40, ...cardShadow },
-  fieldRow: { flexDirection: 'row', alignItems: 'center' },
-  fieldLabel: { width: 90, fontSize: 12, fontWeight: '700', color: colors.text, letterSpacing: 0.3 },
-  field: { flex: 1, minWidth: 0, borderBottomWidth: 1, borderBottomColor: '#C7C7CC', paddingVertical: 6 },
-  fieldInput: { fontSize: 12, color: colors.text, borderWidth: 0, borderBottomWidth: 1, outlineStyle: 'none' },
-  fieldPlaceholder: { fontSize: 12, color: colors.muted },
-  fieldText: { fontSize: 12, color: colors.text, marginLeft: 6 },
-  catValue: { flexDirection: 'row', alignItems: 'center' },
+  detailsCard: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 2,
+    marginTop: 18,
+    ...cardShadow,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    minHeight: 52,
+  },
+  fieldLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  fieldLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  fieldRight: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginLeft: 12,
+  },
+  catSelectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.elevated,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginRight: 6,
+    maxWidth: '85%',
+  },
+  catSelectedText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text,
+    marginLeft: 6,
+  },
+  fieldPlaceholder: {
+    fontSize: 14,
+    color: colors.muted,
+    marginRight: 6,
+  },
+  fieldDivider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginLeft: 42,
+  },
+  fieldInput: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    textAlign: 'right',
+    paddingVertical: 6,
+    paddingHorizontal: 6,
+    marginLeft: 12,
+    borderWidth: 0,
+    outlineStyle: 'none',
+  },
 
-  footer: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, backgroundColor: colors.card },
-  saveBtn: { backgroundColor: colors.primary, borderRadius: 8, height: 52, alignItems: 'center', justifyContent: 'center' },
+  footer: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 10, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.border },
+  saveBtn: { backgroundColor: colors.primary, borderRadius: 8, height: 48, alignItems: 'center', justifyContent: 'center' },
   saveText: { color: colors.onPrimary, fontSize: 16, fontWeight: '700' },
 });

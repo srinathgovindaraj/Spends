@@ -62,7 +62,7 @@ export default function CategoryBreakdown({ transactions }) {
 }
 
 const styles = StyleSheet.create({
-  switch: { borderWidth: 0, padding: 0, marginBottom: 16, shadowOpacity: 0, elevation: 0 }, // sits inside this card: no second shadow
+  switch: { marginBottom: 16 },
   card: { backgroundColor: colors.card, borderRadius: 16, padding: 16, ...cardShadow },
   caption: { color: colors.muted, fontSize: 13, textTransform: 'capitalize' },
   total: { fontSize: 26, fontWeight: '700', marginBottom: 12 },

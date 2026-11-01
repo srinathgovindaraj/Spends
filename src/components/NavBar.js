@@ -3,19 +3,23 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { House, ReceiptText, Wallet, Settings } from 'lucide-react-native';
 import { colors } from '../constants/theme';
 
+import { useSettings } from '../context/SettingsContext';
+
 export const TABS = [
-  { key: 'home', label: 'Home', Icon: House },
-  { key: 'transactions', label: 'Transactions', Icon: ReceiptText },
-  { key: 'accounts', label: 'Accounts', Icon: Wallet },
-  { key: 'settings', label: 'Settings', Icon: Settings },
+  { key: 'home', labelKey: 'home', label: 'Home', Icon: House },
+  { key: 'transactions', labelKey: 'transactions', label: 'Transactions', Icon: ReceiptText },
+  { key: 'accounts', labelKey: 'accounts', label: 'Accounts', Icon: Wallet },
+  { key: 'settings', labelKey: 'settings', label: 'Settings', Icon: Settings },
 ];
 
 export default function NavBar({ active, onChange }) {
+  const { t } = useSettings();
   return (
     <View style={styles.bar} accessibilityRole="tablist">
-      {TABS.map(({ key, label, Icon }) => {
+      {TABS.map(({ key, labelKey, label, Icon }) => {
         const isActive = key === active;
         const tint = isActive ? colors.primary : colors.muted;
+        const tabText = t ? t(labelKey, label) : label;
         return (
           <TouchableOpacity
             key={key}
@@ -23,14 +27,14 @@ export default function NavBar({ active, onChange }) {
             onPress={() => onChange(key)}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
-            accessibilityLabel={label}
+            accessibilityLabel={tabText}
             activeOpacity={0.7}
           >
             <View style={styles.pill}>
               <Icon size={22} color={tint} strokeWidth={isActive ? 2.25 : 1.75} />
             </View>
             <Text style={[styles.label, { color: tint }, isActive && styles.labelActive]} numberOfLines={1}>
-              {label}
+              {tabText}
             </Text>
           </TouchableOpacity>
         );

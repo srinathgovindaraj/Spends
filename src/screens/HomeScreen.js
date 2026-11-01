@@ -3,10 +3,11 @@ import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, Pressable,
 } from 'react-native';
 import {
-  Menu, ChevronDown, Check, ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, TrendingDown,
+  Menu, Plus, ChevronDown, Check, TrendingUp, TrendingDown,
 } from 'lucide-react-native';
 import { useTransactions } from '../context/TransactionsContext';
 import { useAccounts } from '../context/AccountsContext';
+import { useSettings } from '../context/SettingsContext';
 import { colors, cardShadow } from '../constants/theme';
 import { accountBalances, txnAccountId } from '../constants/accounts';
 import { formatMoney, isSameMonth } from '../utils/format';
@@ -26,6 +27,7 @@ function pctChange(curr, prev) {
 export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
   const { transactions, loaded } = useTransactions();
   const { accounts } = useAccounts();
+  const { t } = useSettings();
   const [selected, setSelected] = useState('all'); // 'all' or an account id
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -80,7 +82,7 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
     );
   }
 
-  const selectedName = selected === 'all' ? 'All accounts' : accounts.find((a) => a.id === selected)?.name || 'All accounts';
+  const selectedName = selected === 'all' ? t('allAccounts') : accounts.find((a) => a.id === selected)?.name || t('allAccounts');
   const recent = stats.scoped.slice(0, 5);
 
   return (
@@ -89,6 +91,9 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
       <View style={styles.topBar}>
         <Logo size={30} />
         <Text style={styles.appName}>Spends</Text>
+        <TouchableOpacity style={[styles.roundBtn, { marginRight: 8 }]} onPress={() => onAdd()} accessibilityLabel="Add transaction">
+          <Plus size={20} color={colors.text} />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.roundBtn} onPress={() => onNavigate('settings')} accessibilityLabel="Settings">
           <Menu size={20} color={colors.text} />
         </TouchableOpacity>
@@ -98,7 +103,7 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
       <View style={styles.balanceCard}>
         <View style={styles.balanceTop}>
           <View style={styles.rowBetween}>
-            <Text style={styles.cardCaption}>Total Balance</Text>
+            <Text style={styles.cardCaption}>{t('totalBalance')}</Text>
             <TouchableOpacity style={styles.accountPicker} onPress={() => setPickerOpen(true)} hitSlop={8}>
               <Text style={styles.accountPickerText} numberOfLines={1}>{selectedName}</Text>
               <ChevronDown size={16} color={colors.muted} />
@@ -113,14 +118,14 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
         </View>
         <View style={styles.balanceStrip}>
           <View style={styles.stripCol}>
-            <Text style={styles.stripCaption}>Today's Expense</Text>
+            <Text style={styles.stripCaption}>{t('todaysExpense')}</Text>
             <View style={styles.stripRow}>
               <Text style={styles.stripValue}>-{formatMoney(stats.todayExp, 0)}</Text>
               <ChangeBadge value={stats.todayChange} small />
             </View>
           </View>
           <View style={styles.stripCol}>
-            <Text style={styles.stripCaption}>Weekly Expense</Text>
+            <Text style={styles.stripCaption}>{t('weeklyExpense')}</Text>
             <View style={styles.stripRow}>
               <Text style={styles.stripValue}>-{formatMoney(stats.weekExp, 0)}</Text>
               <ChangeBadge value={stats.weekChange} small />
@@ -129,24 +134,10 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
         </View>
       </View>
 
-      {/* Quick actions */}
-      <View style={styles.actions}>
-        <TouchableOpacity style={[styles.actionBtn, styles.actionPrimary]} onPress={() => onAdd('expense')} activeOpacity={0.85}>
-          <ArrowUpRight size={20} color={colors.onPrimary} />
-          <Text style={[styles.actionText, { color: colors.onPrimary }]}>Expense</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionBtn, styles.actionSecondary]} onPress={() => onAdd('income')} activeOpacity={0.85}>
-          <ArrowDownLeft size={20} color={colors.text} />
-          <Text style={styles.actionText}>Income</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRound} onPress={() => onNavigate('accounts')} accessibilityLabel="Accounts">
-          <Wallet size={20} color={colors.text} />
-        </TouchableOpacity>
-      </View>
 
       {/* Recent transactions */}
       <View style={styles.section}>
-        <SectionHeader title="Recent Transactions" actionLabel="See all" onAction={() => onNavigate('transactions')} />
+        <SectionHeader title={t('recentTransactions')} actionLabel={t('seeAll')} onAction={() => onNavigate('transactions')} />
         {recent.length === 0 ? (
           <Text style={styles.empty}>No transactions yet.</Text>
         ) : (
@@ -156,7 +147,7 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
 
       {/* This month */}
       <View style={styles.section}>
-        <SectionHeader title="This month" />
+        <SectionHeader title={t('thisMonth')} />
         <CategoryBreakdown transactions={stats.monthTxns} />
       </View>
       <View style={styles.section}>
@@ -235,7 +226,9 @@ const styles = StyleSheet.create({
   balance: { fontSize: 38, fontWeight: '700', letterSpacing: -1, color: colors.text, flexShrink: 1, marginRight: 8 },
   balanceStrip: {
     flexDirection: 'row',
-    backgroundColor: colors.elevated,
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
     borderBottomLeftRadius: 21,
     borderBottomRightRadius: 21,
     paddingHorizontal: 18,

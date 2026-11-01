@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { colors } from '../constants/theme';
 
 // Apple-style typography on web.
 // - Apple devices: the real system font (SF Pro) via -apple-system / BlinkMacSystemFont.
@@ -27,6 +28,9 @@ export function installWebFonts() {
   const style = document.createElement('style');
   style.id = 'apple-fonts';
   style.textContent = `
+    html, body {
+      background-color: ${colors.background} !important;
+    }
     html, body, body * {
       font-family: ${APPLE_FONT_STACK} !important;
       -webkit-font-smoothing: antialiased;

@@ -1,0 +1,7 @@
+{
+  "name": "Spends",
+  "description": "Personal finance tracker to add income and expenses, browse by month, view accounts and track net worth.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

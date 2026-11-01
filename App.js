@@ -32,8 +32,8 @@ export default function App() {
   );
 }
 
-// Tabs where the floating "+ transaction" button is shown (Home has its own add buttons)
-const FAB_TABS = ['transactions'];
+// Tabs where the floating "+ transaction" button is shown
+const FAB_TABS = ['home', 'transactions'];
 
 function AppShell() {
   const { settings } = useSettings();
@@ -52,25 +52,31 @@ function AppShell() {
   else screen = <SettingsScreen />;
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar style="dark" />
-      {/* Tabs stay mounted (just hidden) while the form page is open, so they keep their state */}
-      <View style={[styles.shell, form && styles.hidden]}>
-        {/* Keyed by currency so every amount re-renders when it changes in Settings */}
-        <View style={styles.content} key={settings.currency}>
-          {screen}
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+      <StatusBar style={settings.appearance === 'dark' ? 'light' : 'dark'} />
+      <View style={styles.shell}>
+        <View style={[styles.content, { backgroundColor: colors.background }]}>
+          {form ? (
+            <TransactionFormScreen editing={form.editing} initialType={form.type} onClose={closeForm} />
+          ) : (
+            screen
+          )}
         </View>
 
-        {FAB_TABS.includes(tab) && (
+        {!form && FAB_TABS.includes(tab) && (
           <TouchableOpacity style={styles.fab} onPress={() => openAdd()} activeOpacity={0.85} accessibilityLabel="Add transaction">
             <Plus size={28} color={colors.onPrimary} strokeWidth={2.5} />
           </TouchableOpacity>
         )}
 
-        <NavBar active={tab} onChange={setTab} />
+        <NavBar
+          active={form ? 'transactions' : tab}
+          onChange={(nextTab) => {
+            if (form) closeForm();
+            setTab(nextTab);
+          }}
+        />
       </View>
-
-      {form && <TransactionFormScreen editing={form.editing} initialType={form.type} onClose={closeForm} />}
     </SafeAreaView>
   );
 }
@@ -94,11 +100,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 6,
+    elevation: 3,
     shadowColor: '#000',
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
     zIndex: 10,
   },
 });
