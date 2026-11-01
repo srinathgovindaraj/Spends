@@ -30,11 +30,11 @@ export const shadow = {
   elevation: 4,
 };
 
-// Very light shadow for cards: just enough to lift them off the grey page
+// Soft shadow for cards: lifts them off the white page (cards have no border)
 export const cardShadow = {
   shadowColor: '#000',
-  shadowOpacity: 0.04,
-  shadowRadius: 6,
-  shadowOffset: { width: 0, height: 1 },
-  elevation: 1,
+  shadowOpacity: 0.08,
+  shadowRadius: 14,
+  shadowOffset: { width: 0, height: 4 },
+  elevation: 3,
 };
