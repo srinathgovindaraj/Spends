@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginLeft: 4,
   },
-  card: { backgroundColor: colors.card, borderRadius: 16, paddingHorizontal: 14, marginBottom: 16, borderWidth: 1, borderColor: colors.border, ...cardShadow },
+  card: { backgroundColor: colors.card, borderRadius: 16, paddingHorizontal: 14, marginBottom: 16, ...cardShadow },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14 },
   rowBorder: { borderTopWidth: 1, borderTopColor: colors.border },
   symbol: { width: 28, fontSize: 18, fontWeight: '600', color: colors.text },

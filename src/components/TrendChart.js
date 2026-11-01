@@ -48,7 +48,7 @@ export default function TrendChart({ transactions, year, month }) {
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: colors.border, ...cardShadow },
+  card: { backgroundColor: colors.card, borderRadius: 16, padding: 16, ...cardShadow },
   cardTitle: { fontSize: 15, fontWeight: '600', color: colors.text, marginBottom: 12 },
   chart: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 145 },
   chartCol: { alignItems: 'center', flex: 1 },

@@ -32,8 +32,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 16,
     padding: 18,
-    borderWidth: 1,
-    borderColor: colors.border,
     ...cardShadow,
   },
   caption: { color: colors.muted, fontSize: 13 },
