@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../constants/theme';
+import { useThemedStyles } from '../context/SettingsContext';
 
 export default function SectionHeader({ title, actionLabel, onAction }) {
+  const styles = useThemedStyles(getStyles);
   return (
     <View style={styles.row}>
       <Text style={styles.title}>{title}</Text>
@@ -15,7 +17,7 @@ export default function SectionHeader({ title, actionLabel, onAction }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   title: { fontSize: 16, fontWeight: '700', color: colors.text },
   action: { fontSize: 13, fontWeight: '600', color: colors.primary },

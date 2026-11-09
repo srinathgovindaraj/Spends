@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { SafeAreaView, View, TouchableOpacity, StyleSheet, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Plus } from 'lucide-react-native';
-import { SettingsProvider, useSettings } from './src/context/SettingsContext';
+import { SettingsProvider, useSettings, useThemedStyles } from './src/context/SettingsContext';
 import { TransactionsProvider } from './src/context/TransactionsContext';
 import { AccountsProvider } from './src/context/AccountsContext';
 import { CategoriesProvider } from './src/context/CategoriesContext';
@@ -36,7 +36,8 @@ export default function App() {
 const FAB_TABS = ['home', 'transactions'];
 
 function AppShell() {
-  const { settings } = useSettings();
+  const { settings, isDark, themeVersion } = useSettings();
+  const styles = useThemedStyles(getStyles);
   const [tab, setTab] = useState('home');
   // null = form closed; { editing: null, type } = new transaction; { editing: txn } = edit
   const [form, setForm] = useState(null);
@@ -52,9 +53,9 @@ function AppShell() {
   else screen = <SettingsScreen />;
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-      <StatusBar style={settings.appearance === 'dark' ? 'light' : 'dark'} />
-      <View style={styles.shell}>
+    <SafeAreaView key={`shell-${themeVersion}`} style={[styles.safe, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+      <View style={[styles.shell, { backgroundColor: colors.background }]}>
         <View style={[styles.content, { backgroundColor: colors.background }]}>
           {form ? (
             <TransactionFormScreen editing={form.editing} initialType={form.type} onClose={closeForm} />
@@ -64,7 +65,7 @@ function AppShell() {
         </View>
 
         {!form && FAB_TABS.includes(tab) && (
-          <TouchableOpacity style={styles.fab} onPress={() => openAdd()} activeOpacity={0.85} accessibilityLabel="Add transaction">
+          <TouchableOpacity style={[styles.fab, { backgroundColor: colors.primary }]} onPress={() => openAdd()} activeOpacity={0.85} accessibilityLabel="Add transaction">
             <Plus size={28} color={colors.onPrimary} strokeWidth={2.5} />
           </TouchableOpacity>
         )}
@@ -81,13 +82,13 @@ function AppShell() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.background,
     paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
   },
-  shell: { flex: 1 },
+  shell: { flex: 1, backgroundColor: colors.background },
   hidden: { display: 'none' },
   content: { flex: 1, backgroundColor: colors.background },
   fab: {

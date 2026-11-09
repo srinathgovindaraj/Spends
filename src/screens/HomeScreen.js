@@ -7,7 +7,7 @@ import {
 } from 'lucide-react-native';
 import { useTransactions } from '../context/TransactionsContext';
 import { useAccounts } from '../context/AccountsContext';
-import { useSettings } from '../context/SettingsContext';
+import { useSettings, useThemedStyles } from '../context/SettingsContext';
 import { colors, cardShadow } from '../constants/theme';
 import { accountBalances, txnAccountId } from '../constants/accounts';
 import { formatMoney, isSameMonth } from '../utils/format';
@@ -25,6 +25,7 @@ function pctChange(curr, prev) {
 }
 
 export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
+  const styles = useThemedStyles(getStyles);
   const { transactions, loaded } = useTransactions();
   const { accounts } = useAccounts();
   const { t } = useSettings();
@@ -113,7 +114,7 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
             <Text style={[styles.balance, stats.total < 0 && { color: colors.expense }]} numberOfLines={1} adjustsFontSizeToFit>
               {formatMoney(stats.total, 0)}
             </Text>
-            <ChangeBadge value={stats.balanceChange} goodWhenUp />
+            <ChangeBadge value={stats.balanceChange} goodWhenUp styles={styles} />
           </View>
         </View>
         <View style={styles.balanceStrip}>
@@ -121,14 +122,14 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
             <Text style={styles.stripCaption}>{t('todaysExpense')}</Text>
             <View style={styles.stripRow}>
               <Text style={styles.stripValue}>-{formatMoney(stats.todayExp, 0)}</Text>
-              <ChangeBadge value={stats.todayChange} small />
+              <ChangeBadge value={stats.todayChange} small styles={styles} />
             </View>
           </View>
           <View style={styles.stripCol}>
             <Text style={styles.stripCaption}>{t('weeklyExpense')}</Text>
             <View style={styles.stripRow}>
               <Text style={styles.stripValue}>-{formatMoney(stats.weekExp, 0)}</Text>
-              <ChangeBadge value={stats.weekChange} small />
+              <ChangeBadge value={stats.weekChange} small styles={styles} />
             </View>
           </View>
         </View>
@@ -177,23 +178,26 @@ export default function HomeScreen({ onEdit, onAdd, onNavigate }) {
 }
 
 // Small "+1.2%" pill. For expenses (goodWhenUp = false) a rise is shown in red.
-function ChangeBadge({ value, goodWhenUp = false, small }) {
+function ChangeBadge({ value, goodWhenUp = false, small, styles }) {
   if (value === null || !Number.isFinite(value)) return null;
   const up = value >= 0;
   const good = up === goodWhenUp;
   const color = good ? colors.income : colors.expense;
   const Icon = up ? TrendingUp : TrendingDown;
+  const badgeStyle = styles ? styles.badge : { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 10, marginTop: 4 };
+  const smallStyle = styles ? styles.badgeSmall : { paddingHorizontal: 5, paddingVertical: 2, marginTop: 0 };
+  const textStyle = styles ? styles.badgeText : { fontSize: 11, fontWeight: '700', marginLeft: 3 };
   return (
-    <View style={[styles.badge, { backgroundColor: color + '14' }, small && styles.badgeSmall]}>
+    <View style={[badgeStyle, { backgroundColor: color + '18' }, small && smallStyle]}>
       <Icon size={small ? 10 : 12} color={color} strokeWidth={2.5} />
-      <Text style={[styles.badgeText, { color }, small && { fontSize: 10 }]}>
+      <Text style={[textStyle, { color }, small && { fontSize: 10 }]}>
         {up ? '+' : ''}{value.toFixed(1)}%
       </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
@@ -216,6 +220,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 22,
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     ...cardShadow,
   },
   balanceTop: { padding: 18, paddingBottom: 22 },
@@ -270,8 +276,8 @@ const styles = StyleSheet.create({
   section: { paddingHorizontal: 16, marginTop: 24 },
   empty: { color: colors.muted, textAlign: 'center', paddingVertical: 16 },
 
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'center', padding: 32 },
-  picker: { backgroundColor: colors.card, borderRadius: 18, paddingVertical: 8 },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', padding: 32 },
+  picker: { backgroundColor: colors.card, borderRadius: 18, borderWidth: 1, borderColor: colors.border, paddingVertical: 8 },
   pickerTitle: { fontSize: 13, color: colors.muted, paddingHorizontal: 18, paddingVertical: 10 },
   pickerRow: {
     flexDirection: 'row',

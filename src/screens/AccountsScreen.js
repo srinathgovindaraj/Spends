@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAccounts } from '../context/AccountsContext';
 import { useTransactions } from '../context/TransactionsContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import { colors, cardShadow } from '../constants/theme';
 import { accountBalances, getAccountType, txnAccountId } from '../constants/accounts';
 import { formatMoney } from '../utils/format';
@@ -10,6 +11,7 @@ import IconBadge from '../components/IconBadge';
 import { Plus } from 'lucide-react-native';
 
 export default function AccountsScreen() {
+  const styles = useThemedStyles(getStyles);
   const { accounts } = useAccounts();
   const { transactions } = useTransactions();
   const [modalVisible, setModalVisible] = useState(false);
@@ -65,7 +67,7 @@ export default function AccountsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16 },
   title: { color: colors.text, fontSize: 28, fontWeight: '700', letterSpacing: -0.5, marginBottom: 16 },
@@ -76,6 +78,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingVertical: 14,
     paddingHorizontal: 14,
     borderRadius: 14,
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   addBtn: {
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: '#C7C7CC',
+    borderColor: colors.border,
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: 'row',

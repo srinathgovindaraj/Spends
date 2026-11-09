@@ -3,12 +3,14 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, BackHandler } fro
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react-native';
 import { useCategories } from '../context/CategoriesContext';
 import { useTransactions } from '../context/TransactionsContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import { colors, cardShadow } from '../constants/theme';
 import IconBadge from '../components/IconBadge';
 import CategoryEditorScreen from './CategoryEditorScreen';
 
 // Settings › Expense categories / Income categories. `type` is 'expense' or 'income'.
 export default function CategoriesScreen({ type, onBack }) {
+  const styles = useThemedStyles(getStyles);
   const { byType } = useCategories();
   const { transactions } = useTransactions();
   const [editor, setEditor] = useState(null); // null | { category } (category null = new)
@@ -84,7 +86,7 @@ export default function CategoriesScreen({ type, onBack }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.background },
   topBar: {
     flexDirection: 'row',
@@ -93,12 +95,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: colors.card,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   side: { width: 32, alignItems: 'center' },
   topTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
   body: { padding: 18, paddingBottom: 40 },
   sectionLabel: { fontSize: 12, fontWeight: '700', color: colors.muted, letterSpacing: 0.5, marginTop: 24, marginBottom: 8, marginLeft: 2 },
-  card: { backgroundColor: colors.card, borderRadius: 10, paddingHorizontal: 14, ...cardShadow },
+  card: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 14, ...cardShadow },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
   rowBorder: { borderTopWidth: 1, borderTopColor: colors.border },
   rowText: { flex: 1, marginHorizontal: 12 },

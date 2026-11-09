@@ -2,11 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, cardShadow } from '../constants/theme';
 import { useCategories } from '../context/CategoriesContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import TypeSwitch from './TypeSwitch';
 import { formatMoney } from '../utils/format';
 
 // `transactions` should already be limited to the month being shown.
 export default function CategoryBreakdown({ transactions }) {
+  const styles = useThemedStyles(getStyles);
   const [type, setType] = useState('expense');
   const { getCategory } = useCategories();
 
@@ -61,11 +63,11 @@ export default function CategoryBreakdown({ transactions }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   switch: { marginBottom: 16 },
-  card: { backgroundColor: colors.card, borderRadius: 16, padding: 16, ...cardShadow },
+  card: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 16, ...cardShadow },
   caption: { color: colors.muted, fontSize: 13, textTransform: 'capitalize' },
-  total: { fontSize: 26, fontWeight: '700', marginBottom: 12 },
+  total: { fontSize: 26, fontWeight: '700', marginBottom: 12, color: colors.text },
   empty: { color: colors.muted, textAlign: 'center', paddingVertical: 20 },
   catRow: { marginBottom: 12 },
   catTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },

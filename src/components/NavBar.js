@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { House, ReceiptText, Wallet, Settings } from 'lucide-react-native';
 import { colors } from '../constants/theme';
 
-import { useSettings } from '../context/SettingsContext';
+import { useSettings, useThemedStyles } from '../context/SettingsContext';
 
 export const TABS = [
   { key: 'home', labelKey: 'home', label: 'Home', Icon: House },
@@ -14,6 +14,7 @@ export const TABS = [
 
 export default function NavBar({ active, onChange }) {
   const { t } = useSettings();
+  const styles = useThemedStyles(getStyles);
   return (
     <View style={styles.bar} accessibilityRole="tablist">
       {TABS.map(({ key, labelKey, label, Icon }) => {
@@ -43,7 +44,7 @@ export default function NavBar({ active, onChange }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   bar: {
     flexDirection: 'row',
     backgroundColor: colors.card,

@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, cardShadow } from '../constants/theme';
 import { formatMoney } from '../utils/format';
+import { useThemedStyles } from '../context/SettingsContext';
 
 export default function SummaryCard({ income, expense }) {
+  const styles = useThemedStyles(getStyles);
   const balance = income - expense;
   return (
     <View style={styles.card}>
@@ -26,9 +28,11 @@ export default function SummaryCard({ income, expense }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   card: {
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     marginHorizontal: 16,
     borderRadius: 16,
     padding: 18,

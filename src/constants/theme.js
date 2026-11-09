@@ -16,17 +16,18 @@ export const darkColors = {
   background: '#121214', // dark mode page background
   card: '#1C1C1E',       // dark cards
   elevated: '#2C2C2E',   // dark inputs, strips, chips
-  border: '#38383A',
-  text: '#F5F5F7',
-  muted: '#8E8E93',
-  primary: '#2B50FF',
+  border: '#2E2E32',     // subtle card and divider border
+  text: '#F5F5F7',       // crisp white text
+  muted: '#8E8E93',      // secondary text
+  primary: '#2B50FF',    // vibrant blue accent
   onPrimary: '#FFFFFF',
-  primaryLight: '#1B2654',
-  income: '#30D158',
-  expense: '#FF453A',
+  primaryLight: '#1B2654', // subtle tinted primary container
+  income: '#30D158',     // vivid green
+  expense: '#FF453A',    // vivid red
 };
 
-export const colors = { ...lightColors };
+// Initial theme starts as dark mode per appearance default
+export const colors = { ...darkColors };
 
 export function applyTheme(mode) {
   let isDark = mode === 'dark';
@@ -37,8 +38,27 @@ export function applyTheme(mode) {
   Object.assign(colors, next);
   if (typeof document !== 'undefined') {
     document.body.style.backgroundColor = next.background;
+    if (document.documentElement) {
+      document.documentElement.style.backgroundColor = next.background;
+    }
+    let bgStyle = document.getElementById('spends-theme-bg');
+    if (!bgStyle) {
+      bgStyle = document.createElement('style');
+      bgStyle.id = 'spends-theme-bg';
+      document.head.appendChild(bgStyle);
+    }
+    bgStyle.textContent = `
+      html, body, #root {
+        background-color: ${next.background} !important;
+        color-scheme: ${isDark ? 'dark' : 'light'};
+      }
+    `;
   }
   return isDark;
+}
+
+if (typeof document !== 'undefined') {
+  applyTheme('dark');
 }
 
 // Currencies selectable in Settings.

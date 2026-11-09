@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useTransactions } from '../context/TransactionsContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import { colors } from '../constants/theme';
 import { isSameMonth } from '../utils/format';
 import { confirmAction } from '../utils/confirm';
@@ -16,6 +17,7 @@ const FILTERS = [
 ];
 
 export default function TransactionsScreen({ onEdit }) {
+  const styles = useThemedStyles(getStyles);
   const { transactions, deleteTransaction, loaded } = useTransactions();
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -96,7 +98,7 @@ export default function TransactionsScreen({ onEdit }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16 },

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { useAccounts } from '../context/AccountsContext';
 import { useTransactions } from '../context/TransactionsContext';
+import { useSettings, useThemedStyles } from '../context/SettingsContext';
 import { colors } from '../constants/theme';
 import { ACCOUNT_TYPES, txnAccountId } from '../constants/accounts';
 import { getCurrencySymbol } from '../utils/format';
@@ -11,6 +12,8 @@ import { confirmAction, notify } from '../utils/confirm';
 import { X } from 'lucide-react-native';
 
 export default function AccountModal({ visible, editing, onClose }) {
+  const styles = useThemedStyles(getStyles);
+  const { isDark } = useSettings();
   const { accounts, addAccount, updateAccount, deleteAccount } = useAccounts();
   const { transactions } = useTransactions();
   const [name, setName] = useState('');
@@ -76,7 +79,7 @@ export default function AccountModal({ visible, editing, onClose }) {
               onChangeText={setName}
               placeholder="e.g. HDFC Savings"
               placeholderTextColor={colors.muted}
-                keyboardAppearance="light"
+              keyboardAppearance={isDark ? 'dark' : 'light'}
             />
 
             <Text style={styles.label}>Type</Text>
@@ -101,7 +104,7 @@ export default function AccountModal({ visible, editing, onClose }) {
               keyboardType="numbers-and-punctuation"
               placeholder="0.00  (negative for card debt)"
               placeholderTextColor={colors.muted}
-                keyboardAppearance="light"
+              keyboardAppearance={isDark ? 'dark' : 'light'}
             />
 
             <TouchableOpacity style={styles.saveBtn} onPress={save}>
@@ -120,8 +123,8 @@ export default function AccountModal({ visible, editing, onClose }) {
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' },
+const getStyles = (colors) => StyleSheet.create({
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: colors.card,
     borderTopLeftRadius: 20,
@@ -135,6 +138,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '700', color: colors.text },
   label: { fontSize: 13, color: colors.muted, marginTop: 16, marginBottom: 6 },
   input: {
+    backgroundColor: colors.elevated,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 10,
@@ -152,6 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1.5,
     borderColor: colors.border,
+    backgroundColor: colors.elevated,
   },
   typeLabel: { fontSize: 11, color: colors.text, marginTop: 6 },
   saveBtn: { backgroundColor: colors.primary, borderRadius: 8, paddingVertical: 14, alignItems: 'center', marginTop: 24 },

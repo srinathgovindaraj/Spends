@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react-native';
 import { colors } from '../constants/theme';
+import { useThemedStyles } from '../context/SettingsContext';
 
 // Bottom sheet: pick a category, then (if it has any) one of its sub-categories.
 // onSelect(categoryKey, subcategoryKey | null)
 export default function CategoryPickerModal({ visible, categories, value, subValue, onSelect, onClose }) {
+  const styles = useThemedStyles(getStyles);
   const [open, setOpen] = useState(null); // category whose sub-categories are showing
 
   useEffect(() => {
@@ -67,6 +69,7 @@ export default function CategoryPickerModal({ visible, categories, value, subVal
                 hint="No sub-category"
                 selected={value === open.key && !subValue}
                 onPress={() => pickSub(null)}
+                styles={styles}
               />
               {open.subcategories.map((s) => (
                 <SubRow
@@ -74,6 +77,7 @@ export default function CategoryPickerModal({ visible, categories, value, subVal
                   label={s.label}
                   selected={value === open.key && subValue === s.key}
                   onPress={() => pickSub(s.key)}
+                  styles={styles}
                 />
               ))}
             </ScrollView>
@@ -84,7 +88,7 @@ export default function CategoryPickerModal({ visible, categories, value, subVal
   );
 }
 
-function SubRow({ label, hint, selected, onPress }) {
+function SubRow({ label, hint, selected, onPress, styles }) {
   return (
     <TouchableOpacity style={styles.subRow} onPress={onPress}>
       <View style={{ flex: 1 }}>
@@ -96,12 +100,14 @@ function SubRow({ label, hint, selected, onPress }) {
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'flex-end' },
+const getStyles = (colors) => StyleSheet.create({
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: {
     backgroundColor: colors.card,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 28,

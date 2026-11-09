@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { colors } from '../constants/theme';
+import { useThemedStyles } from '../context/SettingsContext';
 import { monthLabel } from '../utils/format';
 
 export default function MonthSwitcher({ year, month, onChange }) {
+  const styles = useThemedStyles(getStyles);
   const shift = (delta) => {
     const d = new Date(year, month + delta, 1);
     onChange(d.getFullYear(), d.getMonth());
@@ -23,12 +25,14 @@ export default function MonthSwitcher({ year, month, onChange }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.elevated,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 3,
   },

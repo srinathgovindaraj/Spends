@@ -2,9 +2,11 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, cardShadow } from '../constants/theme';
 import { isSameMonth } from '../utils/format';
+import { useThemedStyles } from '../context/SettingsContext';
 
 // Income vs expense for the 6 months ending at year/month.
 export default function TrendChart({ transactions, year, month }) {
+  const styles = useThemedStyles(getStyles);
   const trend = useMemo(() => {
     const out = [];
     for (let i = 5; i >= 0; i--) {
@@ -47,8 +49,8 @@ export default function TrendChart({ transactions, year, month }) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: { backgroundColor: colors.card, borderRadius: 16, padding: 16, ...cardShadow },
+const getStyles = (colors) => StyleSheet.create({
+  card: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 16, ...cardShadow },
   cardTitle: { fontSize: 15, fontWeight: '600', color: colors.text, marginBottom: 12 },
   chart: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 145 },
   chartCol: { alignItems: 'center', flex: 1 },

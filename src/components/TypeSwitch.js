@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ArrowUpRight, ArrowDownLeft } from 'lucide-react-native';
 import { colors } from '../constants/theme';
+import { useThemedStyles } from '../context/SettingsContext';
 
 const OPTIONS = [
   { key: 'expense', label: 'Expenses', Icon: ArrowUpRight },
@@ -9,6 +10,7 @@ const OPTIONS = [
 ];
 
 export default function TypeSwitch({ value, onChange, style }) {
+  const styles = useThemedStyles(getStyles);
   return (
     <View style={[styles.track, style]}>
       {OPTIONS.map(({ key, label, Icon }) => {
@@ -35,7 +37,7 @@ export default function TypeSwitch({ value, onChange, style }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   track: {
     flexDirection: 'row',
     backgroundColor: colors.elevated,
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
   btnActive: {
     backgroundColor: colors.card,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },
     elevation: 2,

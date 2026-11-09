@@ -4,10 +4,12 @@ import { colors, cardShadow } from '../constants/theme';
 import { txnAccountId } from '../constants/accounts';
 import { useAccounts } from '../context/AccountsContext';
 import { useCategories } from '../context/CategoriesContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import IconBadge from './IconBadge';
 import { formatMoney, formatDate } from '../utils/format';
 
 export default function TransactionItem({ item, onPress, onLongPress }) {
+  const styles = useThemedStyles(getStyles);
   const { getCategory, getSubcategory } = useCategories();
   const cat = getCategory(item.category);
   const sub = item.subcategory ? getSubcategory(item.category, item.subcategory) : null;
@@ -29,11 +31,13 @@ export default function TransactionItem({ item, onPress, onLongPress }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 14,

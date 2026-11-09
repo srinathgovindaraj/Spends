@@ -28,9 +28,6 @@ export function installWebFonts() {
   const style = document.createElement('style');
   style.id = 'apple-fonts';
   style.textContent = `
-    html, body {
-      background-color: ${colors.background} !important;
-    }
     html, body, body * {
       font-family: ${APPLE_FONT_STACK} !important;
       -webkit-font-smoothing: antialiased;

@@ -4,12 +4,14 @@ import {
 } from 'react-native';
 import { ChevronLeft, Plus, X, Trash2 } from 'lucide-react-native';
 import { useCategories } from '../context/CategoriesContext';
+import { useThemedStyles } from '../context/SettingsContext';
 import { colors, cardShadow } from '../constants/theme';
 import { CATEGORY_ICONS, ICON_NAMES } from '../constants/categories';
 import { confirmAction, notify } from '../utils/confirm';
 
 // Add or edit one category and its sub-categories. category = null means "new".
 export default function CategoryEditorScreen({ category, type, usedCount, onClose }) {
+  const styles = useThemedStyles(getStyles);
   const { addCategory, updateCategory, deleteCategory } = useCategories();
   const [label, setLabel] = useState(category ? category.label : '');
   const [icon, setIcon] = useState(category ? category.icon : 'Tag');
@@ -168,7 +170,7 @@ export default function CategoryEditorScreen({ category, type, usedCount, onClos
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.background },
   topBar: {
     flexDirection: 'row',
@@ -177,12 +179,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: colors.card,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   side: { width: 32, alignItems: 'center' },
   topTitle: { fontSize: 18, fontWeight: '600', color: colors.text, textTransform: 'none' },
   body: { padding: 18, paddingBottom: 30 },
   sectionLabel: { fontSize: 12, fontWeight: '700', color: colors.muted, letterSpacing: 0.5, marginTop: 24, marginBottom: 8, marginLeft: 2 },
-  card: { backgroundColor: colors.card, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6, ...cardShadow },
+  card: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 6, ...cardShadow },
   rowBorder: { borderTopWidth: 1, borderTopColor: colors.border },
 
   fieldRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
@@ -193,7 +197,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text,
     borderBottomWidth: 1,
-    borderBottomColor: '#C7C7CC',
+    borderBottomColor: colors.border,
     paddingVertical: 6,
     outlineStyle: 'none',
   },
@@ -208,7 +212,7 @@ const styles = StyleSheet.create({
   addSubBtn: { width: 34, height: 34, borderRadius: 8, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   hint: { fontSize: 12, color: colors.muted, marginTop: 8, marginLeft: 2 },
 
-  footer: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, backgroundColor: colors.card },
+  footer: { paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.border },
   saveBtn: { backgroundColor: colors.primary, borderRadius: 8, height: 52, alignItems: 'center', justifyContent: 'center' },
   saveText: { color: colors.onPrimary, fontSize: 16, fontWeight: '700' },
 });

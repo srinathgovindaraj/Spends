@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { colors } from '../constants/theme';
+import { useThemedStyles } from '../context/SettingsContext';
 import { monthLabel } from '../utils/format';
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -12,6 +13,7 @@ function sameDay(a, b) {
 
 // Small month calendar. `value` is a Date; onSelect receives a Date at noon.
 export default function DatePickerModal({ visible, value, onSelect, onClose }) {
+  const styles = useThemedStyles(getStyles);
   const [view, setView] = useState({ y: value.getFullYear(), m: value.getMonth() });
 
   useEffect(() => {
@@ -80,9 +82,9 @@ export default function DatePickerModal({ visible, value, onSelect, onClose }) {
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', justifyContent: 'center', padding: 24 },
-  sheet: { backgroundColor: colors.card, borderRadius: 16, padding: 16 },
+const getStyles = (colors) => StyleSheet.create({
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', padding: 24 },
+  sheet: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 16 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
   nav: { width: 34, height: 34, borderRadius: 8, backgroundColor: colors.elevated, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 16, fontWeight: '700', color: colors.text },

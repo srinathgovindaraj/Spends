@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronDown, ChevronRight, Trash2, Tag, FileText } from 'l
 import { useTransactions } from '../context/TransactionsContext';
 import { useAccounts } from '../context/AccountsContext';
 import { useCategories } from '../context/CategoriesContext';
-import { useSettings } from '../context/SettingsContext';
+import { useSettings, useThemedStyles } from '../context/SettingsContext';
 import { colors, cardShadow, shadow } from '../constants/theme';
 import { getAccountType, txnAccountId } from '../constants/accounts';
 import { getCurrencySymbol } from '../utils/format';
@@ -28,10 +28,11 @@ function todayNoon() {
 
 // Full-page form for adding (editing = null) or editing a transaction.
 export default function TransactionFormScreen({ editing, initialType = 'expense', onClose }) {
+  const styles = useThemedStyles(getStyles);
   const { addTransaction, updateTransaction, deleteTransaction } = useTransactions();
   const { accounts } = useAccounts();
   const { byType, getCategory, getSubcategory } = useCategories();
-  const { t } = useSettings();
+  const { t, isDark } = useSettings();
 
   const [type, setType] = useState(editing ? editing.type : initialType);
   const [amount, setAmount] = useState(editing ? String(editing.amount) : '');
@@ -229,7 +230,7 @@ export default function TransactionFormScreen({ editing, initialType = 'expense'
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.background, overflow: 'hidden' },
   rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 
@@ -240,6 +241,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: colors.card,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   side: { width: 32, alignItems: 'center' },
   topTitle: { fontSize: 18, fontWeight: '600', color: colors.text },
@@ -248,6 +251,8 @@ const styles = StyleSheet.create({
 
   amountCard: {
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: 16,
     padding: 18,
     paddingBottom: 22,
@@ -259,6 +264,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 6,
@@ -310,7 +317,7 @@ const styles = StyleSheet.create({
   accountTabActive: {
     backgroundColor: colors.card,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },
     elevation: 2,
@@ -328,6 +335,8 @@ const styles = StyleSheet.create({
 
   detailsCard: {
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 2,
